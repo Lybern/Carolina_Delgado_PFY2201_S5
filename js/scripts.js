@@ -294,8 +294,8 @@ function configurarEventoSubmitFormulario() {
 // --- Uso de setTimeout y función reestablecerColores() ---
 // Función vista en clase para restablecer estilos masivamente
 function reestablecerColores() {
-  const elementos = document.querySelectorAll('p, .navbar-brand, .nav-link');
-  elementos.forEach((el) => {
+  const elementosMenu = document.querySelectorAll('.nav-link');
+  elementosMenu.forEach((el) => {
     el.style.color = ''; // Elimina el estilo en línea, vuelve al CSS original
     el.style.removeProperty('color');
   });
@@ -311,9 +311,10 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("El DOM está listo para ser manipulado con total seguridad.");
 
   // --- Demostración vista en clase de setTimeout y manipulación inicial ---
-  // Cambiar color a rojo en Felimiau, menú (Inicio, Productos, Servicios, Contacto) y párrafos, restaurando tras 3 segundos (3000 ms)
-  document.querySelectorAll('p, .navbar-brand, .nav-link').forEach((el) => {
-    el.style.setProperty('color', '#EF4444', 'important'); // Rojo llamativo visible
+  // Resalta los enlaces del menú (Inicio, Productos, Servicios, Contacto) en color amarillo dorado y restaura tras 3 segundos (3000 ms)
+  const elementosMenu = document.querySelectorAll('.nav-link');
+  elementosMenu.forEach((el) => {
+    el.style.setProperty('color', '#FACC15', 'important'); // Amarillo dorado de Felimiau
   });
   setTimeout(reestablecerColores, 3000);
 
