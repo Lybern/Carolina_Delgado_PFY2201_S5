@@ -1,261 +1,214 @@
 /**
  * ==============================================================================
- * FELIMIAU - MANIPULACIÓN DEL DOM, EVENTOS Y FETCH API
+ * APUNTES TÉCNICOS Y CÓDIGO DE EVALUACIÓN SEMANA 5
+ * Manipulando el DOM con JavaScript para Mejorar la Interactividad
  * ==============================================================================
+ * Asignatura: Desarrollo Frontend I (PFY2201)
+ * Unidad / Semana: Experiencia de Aprendizaje 2 – Semana 5
+ * Institución: Duoc UC – Escuela de Informática y Telecomunicaciones
  * Estudiante: Carolina Delgado
- * Asignatura: Desarrollo Frontend I (PFY2201) - Experiencia 2 / Semana 5
- * Institución: Duoc UC
- * 
- * Descripción del archivo:
- * Este archivo implementa la lógica dinámica requerida en la evaluación:
- * 1. Manipulación del DOM mediante document.createElement y appendChild.
- * 2. Carga asincrónica de datos con Fetch API y manejo de Promesas (.then/.catch).
- * 3. Gestión de eventos interactivos: 'click', 'mouseover', 'mouseout' y 'submit'.
- * 4. Validación de formularios con preventDefault() y retroalimentación en el DOM.
+ * Resultado de Aprendizaje (RA2): Implementa tecnologías JavaScript y Bootstrap 5
+ * en sitios web básicos, considerando buenas prácticas de la industria.
+ * Indicador de Logro (IL6): Manipula el DOM utilizando JavaScript, Fetch API y el
+ * uso de promesas para interactuar con la interfaz de usuario, gestionar eventos y
+ * manejar flujos de datos asincrónicos.
  * ==============================================================================
  */
 
 // ==============================================================================
-// 1. FUNCIONES DE MANIPULACIÓN DEL DOM Y CREACIÓN DE ELEMENTOS
+// 3. MANIPULACIÓN DINÁMICA DEL DOM (PASO 1 REQUERIDO)
 // ==============================================================================
 
 /**
- * Crea dinámicamente el nodo HTML (árbol DOM) para una tarjeta de producto.
- * Utiliza document.createElement y appendChild garantizando seguridad contra XSS con textContent.
+ * Función que construye dinámicamente una tarjeta de producto utilizando createElement y appendChild.
+ * Cumple con el Principio de Seguridad: textContent previene inyección de código (XSS).
  * 
- * @param {Object} producto - Objeto con la información del producto.
- * @param {string} producto.nombre - Título o nombre del producto.
- * @param {string} producto.categoria - Categoría del producto.
- * @param {string} producto.badge - Texto de la insignia destacada.
- * @param {string} producto.badgeColor - Clase de color Bootstrap para la insignia.
- * @param {string} producto.descripcion - Reseña o descripción del producto.
- * @param {number} producto.precio - Precio en pesos chilenos (CLP).
- * @param {Object} producto.imagen - Objeto con URL (src) y texto alternativo (alt).
- * @returns {HTMLElement} Nodo <article> completamente estructurado y listo para insertarse.
+ * @param {Object} prod - Objeto de datos del producto (desde JSON).
+ * @returns {HTMLElement} Nodo <article> completamente ensamblado.
  */
-function crearTarjetaProducto(producto) {
-  // 1. Crear el contenedor de columna responsiva (col-12 en celular, col-sm-6 en tablet, col-lg-4 en desktop)
-  const columna = document.createElement("article");
-  columna.classList.add("col-12", "col-sm-6", "col-lg-4");
+function crearTarjetaProducto(prod) {
+  // 1. Crear el contenedor de columna responsiva en el grid
+  const articulo = document.createElement("article");
+  articulo.classList.add("col-12", "col-sm-6", "col-lg-4");
 
   // 2. Crear la tarjeta (card)
   const tarjeta = document.createElement("div");
   tarjeta.classList.add("card", "card-producto", "h-100", "shadow-sm", "border-0");
 
-  // 3. Crear contenedor de imagen (<figure>) y etiqueta <img>
+  // 3. Crear contenedor multimedia (<figure>) y etiqueta <img>
   const figura = document.createElement("figure");
   figura.classList.add("m-0", "position-relative");
 
-  const imagen = document.createElement("img");
-  imagen.src = producto.imagen.src;
-  imagen.alt = producto.imagen.alt;
-  imagen.classList.add("card-img-top");
-  imagen.setAttribute("loading", "lazy");
-  imagen.setAttribute("width", "600");
-  imagen.setAttribute("height", "220");
+  const img = document.createElement("img");
+  img.src = prod.imagen.src;
+  img.alt = prod.imagen.alt || `Imagen de ${prod.nombre}`;
+  img.classList.add("card-img-top");
+  img.setAttribute("loading", "lazy");
 
-  // 4. Crear etiqueta de insignia (Badge)
+  // Insignia descriptiva (Badge)
   const badge = document.createElement("span");
-  badge.classList.add("badge", `bg-${producto.badgeColor || "warning"}`, "position-absolute", "top-0", "start-0", "m-2", "shadow-sm");
-  badge.textContent = producto.badge || "Destacado";
+  badge.classList.add("badge", `bg-${prod.badgeColor || "warning"}`, "position-absolute", "top-0", "start-0", "m-2", "shadow-sm");
+  badge.textContent = prod.badge || "Destacado";
 
-  figura.appendChild(imagen);
+  figura.appendChild(img);
   figura.appendChild(badge);
 
-  // 5. Crear el cuerpo de la tarjeta (card-body)
+  // 4. Crear cuerpo de la tarjeta (card-body)
   const cuerpo = document.createElement("div");
   cuerpo.classList.add("card-body", "d-flex", "flex-column");
 
   // Categoría
-  const categoria = document.createElement("small");
-  categoria.classList.add("text-muted", "fw-semibold", "text-uppercase", "mb-1");
-  categoria.textContent = producto.categoria;
+  const cat = document.createElement("small");
+  cat.classList.add("text-muted", "fw-semibold", "text-uppercase", "mb-1");
+  cat.textContent = prod.categoria || "Felimiau";
 
-  // Título del producto
-  const titulo = document.createElement("h3");
+  // Título con textContent seguro
+  const titulo = document.createElement("h4");
   titulo.classList.add("card-title", "h5", "fw-bold", "text-dark", "mb-2");
-  titulo.textContent = producto.nombre;
+  titulo.textContent = prod.nombre;
 
   // Descripción
   const descripcion = document.createElement("p");
   descripcion.classList.add("card-text", "text-muted", "flex-grow-1");
-  descripcion.textContent = producto.descripcion;
+  descripcion.textContent = prod.descripcion;
 
-  // Precio formateado a moneda local chilena ($ CLP)
-  const precio = document.createElement("p");
-  precio.classList.add("precio-destacado", "mb-3");
-  precio.textContent = `$${producto.precio.toLocaleString("es-CL")}`;
+  // Precio formateado en pesos chilenos
+  const precioEl = document.createElement("p");
+  precioEl.textContent = `$${prod.precio.toLocaleString("es-CL")}`;
+  precioEl.classList.add("precio-destacado", "mb-3");
 
   // Botón de acción interactivo
-  const botonComprar = document.createElement("button");
-  botonComprar.type = "button";
-  botonComprar.classList.add("btn", "btn-warning", "text-dark", "fw-bold", "mt-auto", "btn-comprar");
-  botonComprar.textContent = "🛒 Añadir al Carrito";
+  const botonAccion = document.createElement("button");
+  botonAccion.type = "button";
+  botonAccion.classList.add("btn", "btn-warning", "text-dark", "fw-bold", "mt-auto", "btn-comprar");
+  botonAccion.textContent = "🛒 Añadir al Carrito";
 
-  // Evento click individual para simular la compra en el botón recién creado
-  botonComprar.addEventListener("click", () => {
-    const textoOriginal = botonComprar.textContent;
-    botonComprar.textContent = "✅ ¡Añadido!";
-    botonComprar.classList.replace("btn-warning", "btn-success");
-    botonComprar.classList.replace("text-dark", "text-white");
+  // Evento click con feedback interactivo
+  botonAccion.addEventListener("click", () => {
+    const textoPrevio = botonAccion.textContent;
+    botonAccion.textContent = "✅ ¡Añadido!";
+    botonAccion.classList.replace("btn-warning", "btn-success");
+    botonAccion.classList.replace("text-dark", "text-white");
 
     setTimeout(() => {
-      botonComprar.textContent = textoOriginal;
-      botonComprar.classList.replace("btn-success", "btn-warning");
-      botonComprar.classList.replace("text-white", "text-dark");
+      botonAccion.textContent = textoPrevio;
+      botonAccion.classList.replace("btn-success", "btn-warning");
+      botonAccion.classList.replace("text-white", "text-dark");
     }, 1800);
   });
 
-  // 6. Ensamblar todos los nodos hijos en el cuerpo de la tarjeta
-  cuerpo.appendChild(categoria);
+  // 5. Ensamblar estructura con appendChild
+  cuerpo.appendChild(cat);
   cuerpo.appendChild(titulo);
   cuerpo.appendChild(descripcion);
-  cuerpo.appendChild(precio);
-  cuerpo.appendChild(botonComprar);
+  cuerpo.appendChild(precioEl);
+  cuerpo.appendChild(botonAccion);
 
-  // 7. Ensamblar tarjeta completa
   tarjeta.appendChild(figura);
   tarjeta.appendChild(cuerpo);
-  columna.appendChild(tarjeta);
+  articulo.appendChild(tarjeta);
 
-  return columna;
+  return articulo;
 }
 
-/**
- * Renderiza el listado de productos en el contenedor del DOM.
- * Limpia el contenido previo y anida cada tarjeta construida.
- * 
- * @param {Array<Object>} productos - Arreglo de objetos de productos.
- */
-function mostrarProductos(productos) {
-  const contenedor = document.getElementById("productos");
-  if (!contenedor) return;
-
-  // Limpiar el estado de carga o contenido previo
-  contenedor.innerHTML = "";
-
-  // Insertar cada tarjeta utilizando appendChild
-  productos.forEach((producto) => {
-    const tarjetaNode = crearTarjetaProducto(producto);
-    contenedor.appendChild(tarjetaNode);
-  });
-}
+// ==============================================================================
+// 5. FETCH API, ASINCRONÍA Y PROMESAS (PASO 3 REQUERIDO)
+// ==============================================================================
 
 /**
- * Muestra un mensaje amigable de error en el DOM si el Fetch falla.
- * 
- * @param {Error} error - Error capturado durante la solicitud.
+ * Carga asincrónica completa con promesas (.then() y .catch()) desde 'data/productos.json'.
+ * "Todo lo que sucede en el Fetch está en el futuro" (Apuntes de clase).
  */
-function mostrarMensajeErrorCatalogo(error) {
+function cargarProductos() {
   const contenedor = document.getElementById("productos");
   if (!contenedor) return;
 
   contenedor.innerHTML = `
-    <div class="col-12 text-center py-4">
-      <div class="alert alert-warning d-inline-block p-4 shadow-sm" role="alert">
-        <h4 class="alert-heading fw-bold">⚠️ No se pudo cargar el catálogo</h4>
-        <p class="mb-0 text-muted">Ocurrió un inconveniente al consultar los datos del servidor.</p>
-        <small class="text-secondary">${error.message}</small>
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Cargando catálogo...</span>
       </div>
+      <p class="text-muted mt-2">Cargando catálogo oficial...</p>
     </div>
   `;
-}
 
-// ==============================================================================
-// 2. CONSUMO DE DATOS ASINCRÓNICOS CON FETCH API Y PROMESAS
-// ==============================================================================
-
-/**
- * Carga los productos desde el archivo JSON local mediante la Fetch API.
- * Gestiona el flujo asincrónico con Promesas (.then y .catch).
- */
-function cargarProductos() {
-  const contenedor = document.getElementById("productos");
-  if (contenedor) {
-    contenedor.innerHTML = `
-      <div class="col-12 text-center py-5">
-        <div class="spinner-border text-warning" role="status">
-          <span class="visually-hidden">Cargando catálogo...</span>
-        </div>
-        <p class="text-muted mt-2">Cargando catálogo oficial de Felimiau...</p>
-      </div>
-    `;
-  }
-
-  // Solicitud con Fetch API (Ruta relativa compatible con GitHub Pages)
+  // Solicitud HTTP con Fetch API
   fetch("data/productos.json")
     .then((respuesta) => {
+      // Validación del estado de la respuesta del servidor (HTTP 200 OK)
       if (!respuesta.ok) {
-        throw new Error(`Error en la solicitud HTTP: ${respuesta.status} - ${respuesta.statusText}`);
+        throw new Error(`Error en servidor: ${respuesta.status}`);
       }
-      return respuesta.json(); // Parsea los datos JSON a objetos JavaScript
+      return respuesta.json(); // Convierte texto a objeto/arreglo JSON
     })
-    .then((datos) => {
-      console.log("Catálogo Felimiau cargado exitosamente:", datos);
-      mostrarProductos(datos);
+    .then((productos) => {
+      // Limpia el contenedor previo a insertar los nuevos nodos
+      contenedor.innerHTML = "";
+
+      // Itera y anida dinámicamente cada producto creado con createElement
+      productos.forEach((prod) => {
+        const card = crearTarjetaProducto(prod);
+        contenedor.appendChild(card);
+      });
+      console.log(`Catálogo cargado con éxito: ${productos.length} productos renderizados.`);
     })
     .catch((error) => {
-      console.error("Fallo al consumir Fetch API:", error);
-      mostrarMensajeErrorCatalogo(error);
+      // Captura y manejo de posibles errores de red o carga de datos
+      console.error("Error en Fetch:", error);
+      contenedor.innerHTML = '<div class="col-12 text-center py-4"><p class="alert alert-warning d-inline-block">No se pudo cargar el catálogo de productos.</p></div>';
     });
 }
 
 // ==============================================================================
-// 3. GESTIÓN DE EVENTOS E INTERACTIVIDAD (CLICK, MOUSEOVER, SUBMIT)
+// 4. GESTIÓN DE EVENTOS E INTERACTIVIDAD (PASO 2 REQUERIDO)
 // ==============================================================================
 
 /**
- * Configura el evento 'click' en el botón de ofertas para alternar su visibilidad en el DOM.
+ * A) Evento 'click' (Acciones de botones y conmutadores): Mostrar y ocultar ofertas
  */
-function configurarBotonOfertas() {
+function configurarEventoClickOfertas() {
   const botonOfertas = document.getElementById("boton_ofertas");
   const seccionOfertas = document.getElementById("seccion_ofertas");
 
   if (!botonOfertas || !seccionOfertas) return;
 
   botonOfertas.addEventListener("click", () => {
-    // Alterna la clase d-none de Bootstrap para mostrar u ocultar
     seccionOfertas.classList.toggle("d-none");
-
-    const estaOculto = seccionOfertas.classList.contains("d-none");
-    botonOfertas.textContent = estaOculto ? "🔥 Ver Ofertas Especiales" : "❌ Ocultar Ofertas";
-    botonOfertas.setAttribute("aria-expanded", !estaOculto);
+    botonOfertas.textContent = seccionOfertas.classList.contains("d-none")
+      ? "🔥 Ver Ofertas Especiales"
+      : "❌ Ocultar Ofertas";
   });
 }
 
 /**
- * Configura el botón de accesibilidad para pausar o reanudar el carrusel mediante evento 'click'.
+ * Evento 'click' adicional para control de accesibilidad del carrusel (Pausar / Reanudar)
  */
 function configurarControlCarrusel() {
-  const carruselElemento = document.getElementById("carruselFelimiau");
-  const botonPausa = document.getElementById("btn_pausa_carrusel");
+  const carruselEl = document.getElementById("carruselFelimiau");
+  const btnPausa = document.getElementById("btn_pausa_carrusel");
 
-  if (!carruselElemento || !botonPausa || !window.bootstrap) return;
+  if (!carruselEl || !btnPausa || !window.bootstrap) return;
 
-  // Obtener la instancia del carrusel de Bootstrap
-  const carruselInstancia = bootstrap.Carousel.getOrCreateInstance(carruselElemento);
-  let enPausa = false;
+  const carrusel = bootstrap.Carousel.getOrCreateInstance(carruselEl);
+  let pausado = false;
 
-  botonPausa.addEventListener("click", () => {
-    if (!enPausa) {
-      carruselInstancia.pause();
-      botonPausa.textContent = "▶️ Reanudar";
-      botonPausa.setAttribute("aria-label", "Reanudar rotación automática del carrusel");
-      enPausa = true;
+  btnPausa.addEventListener("click", () => {
+    if (!pausado) {
+      carrusel.pause();
+      btnPausa.textContent = "▶️ Reanudar";
+      pausado = true;
     } else {
-      carruselInstancia.cycle();
-      botonPausa.textContent = "⏸️ Pausar";
-      botonPausa.setAttribute("aria-label", "Pausar rotación automática del carrusel");
-      enPausa = false;
+      carrusel.cycle();
+      btnPausa.textContent = "⏸️ Pausar";
+      pausado = false;
     }
   });
 }
 
 /**
- * Configura los eventos 'mouseover' y 'mouseout' en los enlaces del menú
- * para actualizar dinámicamente el texto descriptivo en la sección de bienvenida.
+ * B) Eventos 'mouseover' y 'mouseout' (Efectos de puntero dinámico)
  */
-function configurarEventosMenu() {
+function configurarEventosMouseMenu() {
   const menuProductos = document.getElementById("menu_productos");
   const menuServicios = document.getElementById("menu_servicios");
   const menuContacto = document.getElementById("menu_contacto");
@@ -263,85 +216,71 @@ function configurarEventosMenu() {
 
   if (!leadInfo) return;
 
-  const textoDefault = "Explora nuestra selección especial de artículos recomendados para el bienestar felino.";
+  const textoBase = "Explora nuestra selección especial de artículos recomendados para el bienestar felino.";
 
-  const items = [
-    {
-      elemento: menuProductos,
-      mensaje: "🐾 Descubre alimentos premium, rascadores resistentes y camas diseñadas para el descanso de tu gato."
-    },
-    {
-      elemento: menuServicios,
-      mensaje: "🚀 Conoce nuestros despachos express en 24/48 hrs, calidad aprobada y formas de pago protegidas."
-    },
-    {
-      elemento: menuContacto,
-      mensaje: "💌 ¿Preguntas sobre nutrición o asesoría? Déjanos un mensaje y te responderemos a la brevedad."
-    }
+  const enlaces = [
+    { el: menuProductos, msg: "🐾 Catálogo completo: alimentos premium, rascadores y camas acogedoras." },
+    { el: menuServicios, msg: "🚀 Despachos en 24/48 hrs garantizados a todo Chile y calidad veterinaria." },
+    { el: menuContacto, msg: "💌 Contáctanos para asesoría personalizada en el cuidado de tu gato." }
   ];
 
-  items.forEach(({ elemento, mensaje }) => {
-    if (elemento) {
-      elemento.addEventListener("mouseover", () => {
-        leadInfo.textContent = mensaje;
-        leadInfo.classList.add("text-dark", "fw-medium");
+  enlaces.forEach(({ el, msg }) => {
+    if (el) {
+      el.addEventListener("mouseover", () => {
+        leadInfo.textContent = msg;
+        leadInfo.classList.add("text-dark", "fw-semibold");
       });
-
-      elemento.addEventListener("mouseout", () => {
-        leadInfo.textContent = textoDefault;
-        leadInfo.classList.remove("text-dark", "fw-medium");
+      el.addEventListener("mouseout", () => {
+        leadInfo.textContent = textoBase;
+        leadInfo.classList.remove("text-dark", "fw-semibold");
       });
     }
   });
 }
 
 /**
- * Configura el evento 'submit' del formulario de contacto.
- * Utiliza preventDefault() para evitar la recarga, valida los datos y muestra respuesta en el DOM.
+ * C) Evento 'submit' y Prevención de Recarga con preventDefault()
+ * Valida los campos con JavaScript y despliega el mensaje en el DOM sin recargar la página.
  */
-function configurarFormularioContacto() {
-  const formulario = document.getElementById("form_contacto");
+function configurarEventoSubmitFormulario() {
+  const formContacto = document.getElementById("form_contacto");
   const cajaMensaje = document.getElementById("mensaje_estado");
 
-  if (!formulario || !cajaMensaje) return;
+  if (!formContacto || !cajaMensaje) return;
 
-  formulario.addEventListener("submit", (evento) => {
-    // 1. Prevenir el comportamiento por defecto (recarga del navegador)
-    evento.preventDefault();
+  formContacto.addEventListener("submit", (evento) => {
+    evento.preventDefault(); // Detiene la recarga por defecto obligatoria
 
-    // 2. Obtener y sanitizar los valores ingresados
-    const nombre = document.getElementById("nombre_cliente").value.trim();
-    const correo = document.getElementById("correo_cliente").value.trim();
-    const asunto = document.getElementById("asunto_cliente").value;
-    const mensaje = document.getElementById("mensaje_cliente").value.trim();
+    const inputNombre = document.getElementById("nombre_cliente").value.trim();
+    const inputCorreo = document.getElementById("correo_cliente").value.trim();
+    const inputAsunto = document.getElementById("asunto_cliente").value;
+    const inputMensaje = document.getElementById("mensaje_cliente").value.trim();
 
-    // Expresión regular para validar formato de correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    // 3. Validaciones defensivas
-    if (!nombre || !correo || !asunto || !mensaje) {
+    // Validación defensiva
+    if (inputNombre === "" || inputCorreo === "" || inputAsunto === "" || inputMensaje === "") {
       cajaMensaje.style.display = "block";
       cajaMensaje.className = "alert alert-danger shadow-sm";
-      cajaMensaje.textContent = "⚠️ Por favor, completa todos los campos obligatorios del formulario.";
+      cajaMensaje.textContent = "Debe completar todos los campos.";
       return;
     }
 
-    if (!emailRegex.test(correo)) {
+    // Validación básica de correo electrónico
+    if (!inputCorreo.includes("@") || !inputCorreo.includes(".")) {
       cajaMensaje.style.display = "block";
       cajaMensaje.className = "alert alert-warning shadow-sm";
-      cajaMensaje.textContent = "⚠️ Por favor, ingresa un correo electrónico válido (ejemplo: usuario@correo.com).";
+      cajaMensaje.textContent = "Por favor ingrese un correo electrónico válido.";
       return;
     }
 
-    // 4. Mensaje de éxito dinámico en el DOM
+    // Mensaje de éxito dinámico en el DOM
     cajaMensaje.style.display = "block";
     cajaMensaje.className = "alert alert-success shadow-sm";
-    cajaMensaje.textContent = `🐾 ¡Muchas gracias por tu mensaje, ${nombre}! Nos pondremos en contacto contigo a ${correo} muy pronto.`;
+    cajaMensaje.textContent = `¡Mensaje enviado con éxito, ${inputNombre}! Nos comunicaremos a ${inputCorreo} a la brevedad.`;
+    
+    // Restablecer campos del formulario
+    formContacto.reset();
 
-    // 5. Restablecer el formulario
-    formulario.reset();
-
-    // Ocultar mensaje después de 6 segundos
+    // Ocultar mensaje tras 6 segundos
     setTimeout(() => {
       cajaMensaje.style.display = "none";
     }, 6000);
@@ -349,22 +288,35 @@ function configurarFormularioContacto() {
 }
 
 // ==============================================================================
-// 4. INICIALIZACIÓN PRINCIPAL AL CARGAR EL DOM
+// 4.3 TEMPORIZADORES ASINCRÓNICOS: setTimeout y reestablecerColores()
 // ==============================================================================
 
 /**
- * Asegura que todo el árbol DOM esté completamente disponible antes de ejecutar
- * las manipulaciones de JavaScript y el registro de eventos.
+ * Función vista en clase para restablecer estilos masivamente en elementos <p>.
+ */
+function reestablecerColores() {
+  const parrafos = document.querySelectorAll("p.lead");
+  parrafos.forEach((p) => {
+    p.style.color = ""; // Elimina el estilo en línea, vuelve al CSS
+  });
+}
+
+// ==============================================================================
+// 1.4 EVENTO DOMContentLoaded (PUNTO DE ENTRADA SEGURO)
+// ==============================================================================
+
+/**
+ * Espera a que todo el árbol DOM esté construido antes de ejecutar cualquier manipulación.
  */
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Felimiau: DOM completamente cargado. Inicializando componentes...");
+  console.log("El DOM está listo para ser manipulado con total seguridad.");
 
-  // 1. Carga asincrónica de datos externos
+  // 1. Carga dinámica de datos con Fetch API y Promesas
   cargarProductos();
 
-  // 2. Registro de eventos interactivos
-  configurarBotonOfertas();
+  // 2. Inicialización de eventos interactivos (click, mouseover, submit)
+  configurarEventoClickOfertas();
   configurarControlCarrusel();
-  configurarEventosMenu();
-  configurarFormularioContacto();
+  configurarEventosMouseMenu();
+  configurarEventoSubmitFormulario();
 });
