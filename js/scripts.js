@@ -44,6 +44,11 @@ function crearTarjetaProducto(prod) {
   img.alt = prod.imagen.alt || `Imagen de ${prod.nombre}`;
   img.classList.add("card-img-top");
   img.setAttribute("loading", "lazy");
+  img.onerror = function() {
+    if (!this.src.includes("semana5/") && !this.src.startsWith("http")) {
+      this.src = "semana5/" + prod.imagen.src;
+    }
+  };
 
   // Insignia descriptiva (Badge)
   const badge = document.createElement("span");
@@ -132,8 +137,15 @@ function cargarProductos() {
     </div>
   `;
 
-  // Solicitud HTTP con Fetch API
+  // Solicitud HTTP con Fetch API (compatible con ejecución en servidor raíz o subcarpeta)
   fetch("data/productos.json")
+    .then((respuesta) => {
+      if (!respuesta.ok) {
+        // Intento de fallback si Live Server fue abierto en la carpeta raíz
+        return fetch("semana5/data/productos.json");
+      }
+      return respuesta;
+    })
     .then((respuesta) => {
       // Validación del estado de la respuesta del servidor (HTTP 200 OK)
       if (!respuesta.ok) {
