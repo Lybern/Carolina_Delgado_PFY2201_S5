@@ -291,13 +291,12 @@ function configurarEventoSubmitFormulario() {
 // 4.3 TEMPORIZADORES ASINCRÓNICOS: setTimeout y reestablecerColores()
 // ==============================================================================
 
-/**
- * Función vista en clase para restablecer estilos masivamente en elementos <p>.
- */
+// --- Uso de setTimeout y función reestablecerColores() ---
+// Función vista en clase para restablecer estilos masivamente
 function reestablecerColores() {
-  const parrafos = document.querySelectorAll("p.lead");
+  const parrafos = document.querySelectorAll('p');
   parrafos.forEach((p) => {
-    p.style.color = ""; // Elimina el estilo en línea, vuelve al CSS
+    p.style.color = ''; // Elimina el estilo en línea, vuelve al CSS
   });
 }
 
@@ -305,11 +304,15 @@ function reestablecerColores() {
 // 1.4 EVENTO DOMContentLoaded (PUNTO DE ENTRADA SEGURO)
 // ==============================================================================
 
-/**
- * Espera a que todo el árbol DOM esté construido antes de ejecutar cualquier manipulación.
- */
+// --- Uso Seguro de DOMContentLoaded ---
+// BUENA PRÁCTICA: Asegurar la disponibilidad completa del DOM antes de ejecutar código
 document.addEventListener("DOMContentLoaded", () => {
   console.log("El DOM está listo para ser manipulado con total seguridad.");
+
+  // --- Demostración vista en clase de setTimeout y manipulación inicial ---
+  // Cambiar color a rojo y restaurar tras 3 segundos (3000 ms)
+  document.querySelectorAll('p').forEach(p => p.style.color = 'red');
+  setTimeout(reestablecerColores, 3000);
 
   // 1. Carga dinámica de datos con Fetch API y Promesas
   cargarProductos();
