@@ -1,0 +1,182 @@
+/* ==========================================================================
+   FELIMIAU - ESTILOS VISUALES EXTERNOS (CSS MODULAR)
+   Desarrollado por: Carolina Delgado
+   Asignatura: Desarrollo Frontend I (PFY2201) - Experiencia 2 / Semana 5
+   ========================================================================== */
+
+/* Variables de color personalizadas para la identidad de Felimiau */
+:root {
+  --felimiau-amarillo-suave: #FEF9C3;
+  --felimiau-dorado: #FACC15;
+  --felimiau-dorado-oscuro: #EAB308;
+  --felimiau-oscuro: #1E293B;
+  --felimiau-texto-suave: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   1. Ajustes Generales y Tipografía
+   -------------------------------------------------------------------------- */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--felimiau-oscuro);
+  background-color: #F8FAFC;
+}
+
+/* --------------------------------------------------------------------------
+   2. Carrusel Accesible y Responsivo
+   -------------------------------------------------------------------------- */
+.carousel-item {
+  background-color: var(--felimiau-amarillo-suave);
+  height: 460px;
+  text-align: center;
+}
+
+.carousel-item img {
+  height: 460px;
+  width: auto !important;
+  max-width: 100%;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+/* Cuadro de texto flotante con borde dorado y fondo oscuro translúcido */
+.carousel-caption {
+  bottom: 30px;
+  left: 10%;
+  right: 10%;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  padding: 16px 24px;
+  border: 2px solid var(--felimiau-dorado);
+}
+
+.carousel-caption h2 {
+  color: var(--felimiau-dorado);
+  font-weight: 700;
+}
+
+.carousel-caption p {
+  color: #FFFFFF;
+  margin-bottom: 0;
+}
+
+/* Botón flotante para pausar / reanudar el carrusel (Accesibilidad WCAG) */
+.btn-carrusel-control {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  background-color: rgba(30, 41, 59, 0.75);
+  color: #FFFFFF;
+  border: 1px solid var(--felimiau-dorado);
+  font-size: 0.85rem;
+  border-radius: 20px;
+  padding: 4px 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-carrusel-control:hover,
+.btn-carrusel-control:focus {
+  background-color: var(--felimiau-dorado);
+  color: #000000;
+}
+
+/* Adaptación responsiva para pantallas móviles */
+@media (max-width: 768px) {
+  .carousel-item,
+  .carousel-item img {
+    height: 300px;
+  }
+  .carousel-caption {
+    bottom: 15px;
+    left: 5%;
+    right: 5%;
+    padding: 10px 14px;
+  }
+  .carousel-caption h2 {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+  }
+  .carousel-caption p {
+    font-size: 0.82rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Tarjetas de Productos (Grid Responsivo y Normalización de Imágenes)
+   -------------------------------------------------------------------------- */
+.card-producto {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+/* Normalización de dimensiones de imágenes para evitar desplazamientos (CLS) */
+.card-producto img {
+  height: 220px;
+  width: 100%;
+  object-fit: cover;
+  background-color: #F1F5F9;
+}
+
+/* Efecto hover interactivo sobre las tarjetas */
+.card-producto:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+  border-color: var(--felimiau-dorado) !important;
+}
+
+.precio-destacado {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0284C7;
+}
+
+/* --------------------------------------------------------------------------
+   4. Sección de Ofertas Especiales (Interactividad con JS)
+   -------------------------------------------------------------------------- */
+#seccion-ofertas {
+  border-left: 5px solid var(--felimiau-dorado);
+  background-color: #FEFCE8;
+  transition: all 0.3s ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   5. Formulario de Contacto y Validación
+   -------------------------------------------------------------------------- */
+.form-contacto-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.form-contacto-card .form-control:focus,
+.form-contacto-card .form-select:focus {
+  border-color: var(--felimiau-dorado-oscuro);
+  box-shadow: 0 0 0 0.25rem rgba(250, 204, 21, 0.25);
+}
+
+/* Caja de estado del formulario */
+#mensaje_estado {
+  display: none;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 12px 16px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   6. Footer
+   -------------------------------------------------------------------------- */
+footer {
+  border-top: 3px solid var(--felimiau-dorado);
+}
