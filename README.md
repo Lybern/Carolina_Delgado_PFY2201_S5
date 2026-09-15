@@ -4,6 +4,7 @@
 **Evaluación:** Experiencia de Aprendizaje 2 – Semana 5 (Formativa)  
 **Actividad:** Manipulando el DOM con JavaScript para Mejorar la Interactividad  
 **Estudiante:** Carolina Delgado  
+**Profesor:** Marcelo Zepeda
 **Institución:** Duoc UC – Escuela de Informática y Telecomunicaciones  
 
 ---
@@ -11,8 +12,6 @@
 ## 📖 Descripción del Proyecto
 
 **Felimiau** es una plataforma web interactiva y responsiva desarrollada para una tienda boutique especializada en gatos. En esta quinta semana, se integró **JavaScript Vanilla moderno (ES6+)** para transformar la estructura visual en una aplicación dinámica e interactiva que responde a las acciones del usuario y consume datos de forma asincrónica.
-
-El proyecto incorpora el 100% de la retroalimentación técnica de la semana anterior, separando estilos en una hoja CSS externa, optimizando imágenes locales (`blanquito.jpg`, `talia.jpg`, `rascador.png`), normalizando proporciones y profundizando la accesibilidad web (WCAG).
 
 ---
 
