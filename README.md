@@ -16,7 +16,7 @@ El proyecto incorpora el 100% de la retroalimentación técnica de la semana ant
 
 ---
 
-## 🚀 Funcionalidades y Cumplimiento de la Rúbrica (CL 100%)
+## Funcionalidades implementadas
 
 ### 1. Manipulación Dinámica del DOM (`createElement` y `appendChild`)
 - Construcción modular y programática de las tarjetas de productos (`<article>`, `<figure>`, `<img>`, `<h3>`, `<p>`, `<button>`).
