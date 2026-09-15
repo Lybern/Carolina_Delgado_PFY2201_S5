@@ -113,6 +113,17 @@ function crearTarjetaProducto(prod) {
   tarjeta.appendChild(cuerpo);
   articulo.appendChild(tarjeta);
 
+  // --- Eventos mouseover y mouseout para realce visual (Sección 4.2 B de clase) ---
+  tarjeta.addEventListener("mouseover", () => {
+    tarjeta.style.backgroundColor = "#FEF9C3"; // Fondo amarillo cálido Felimiau
+    tarjeta.style.transform = "translateY(-4px)";
+    tarjeta.style.transition = "0.2s";
+  });
+  tarjeta.addEventListener("mouseout", () => {
+    tarjeta.style.backgroundColor = ""; // Restablece los estilos originales de CSS
+    tarjeta.style.transform = "";
+  });
+
   return articulo;
 }
 
